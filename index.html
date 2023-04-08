@@ -1,197 +1,185 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
-	<meta charset="UTF-8">
-
-	<title>Calculator</title>
-
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>calculator</title>
+	<link rel="shortcut icon" type="image/png" href="favicon.png">
 	<style>
-
 		body {
-
-			background-color: #f4f4f4;
-
+			background-color: #f5f5f5;
 			font-family: Arial, sans-serif;
-
 		}
-
 		
-
-		h1 {
-
-			text-align: center;
-
-		}
-
-		
-
-		#calculator {
-
-			display: flex;
-
-			flex-wrap: wrap;
-
-			justify-content: center;
-
-			align-items: center;
-
-			max-width: 400px;
-
+		.container {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			grid-gap: 5px;
+			padding: 10px;
+			max-width: 300px;
 			margin: 0 auto;
-
+			background-color: #eee;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
 		}
-
 		
-
-		button {
-
-			font-size: 16px;
-
-			padding: 8px 16px;
-
-			margin: 4px;
-
+		.container button {
 			background-color: #fff;
-
-			border: 1px solid #ccc;
-
-			border-radius: 4px;
-
-			cursor: pointer;
-
-		}
-
-		
-
-		button:hover {
-
-			background-color: #f4f4f4;
-
-		}
-
-		
-
-		input {
-
+			border: none;
 			font-size: 24px;
-
-			width: 100%;
-
-			padding: 8px;
-
-			box-sizing: border-box;
-
-			margin-bottom: 16px;
-
-			border: 1px solid #ccc;
-
-			border-radius: 4px;
-
+			padding: 10px;
+			cursor: pointer;
+			box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 		}
-
+		
+		.container button:hover {
+			background-color: #f5f5f5;
+		}
+		
+		.display {
+			grid-column: 1 / -1;
+			background-color: #fff;
+			border: none;
+			font-size: 24px;
+			padding: 10px;
+			text-align: right;
+			box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+		}
 	</style>
-
 </head>
-
 <body>
-
-	<h1>Calculator</h1>
-
-	<div id="calculator">
-
-		<input type="text" id="display" readonly>
-
-		<button onclick="clearDisplay()">C</button>
-
-		<button onclick="backspace()">&#8592;</button>
-
-		<button onclick="insert('%')">%</button>
-
-		<button onclick="insert('/')">/</button>
-
-		<button onclick="insert('*')">*</button>
-
-		<button onclick="insert('-')">-</button>
-
-		<button onclick="insert('+')">+</button>
-
-		<button onclick="insert('.')">.</button>
-
-		<button onclick="insert('7')">7</button>
-
-		<button onclick="insert('8')">8</button>
-
-		<button onclick="insert('9')">9</button>
-
-		<button onclick="insert('4')">4</button>
-
-		<button onclick="insert('5')">5</button>
-
-		<button onclick="insert('6')">6</button>
-
-		<button onclick="insert('1')">1</button>
-
-		<button onclick="insert('2')">2</button>
-
-		<button onclick="insert('3')">3</button>
-
-		<button onclick="insert('0')">0</button>
-
-		<button onclick="insert('Math.sin(')">sin</button>
-
-		<button onclick="insert('Math.cos(')">cos</button>
-
-		<button onclick="insert('Math.tan(')">tan</button>
-
-		<button onclick="calculate()">=</button>
-
+	<div class="container">
+		<input type="text" id="display" class="display" readonly>
+		<button id="clear">C</button>
+		<button id="backspace">←</button>
+		<button id="divide">÷</button>
+		<button id="multiply">×</button>
+		<button id="seven">7</button>
+		<button id="eight">8</button>
+		<button id="nine">9</button>
+		<button id="subtract">-</button>
+		<button id="four">4</button>
+		<button id="five">5</button>
+		<button id="six">6</button>
+		<button id="add">+</button>
+		<button id="one">1</button>
+		<button id="two">2</button>
+		<button id="three">3</button>
+		<button id="equals">=</button>
+		<button id="zero">0</button>
+		<button id="decimal">.</button>
+		<button id="pi">π</button>
+		<button id="sin">sin</button>
+		<button id="cos">cos</button>
+		<button id="tan">tan</button>
 	</div>
-
-	
-
 	<script>
+		const display = document.getElementById('display');
+const clearButton = document.getElementById('clear');
+const backspaceButton = document.getElementById('backspace');
+const divideButton = document.getElementById('divide');
+const multiplyButton = document.getElementById('multiply');
+const subtractButton = document.getElementById('subtract');
+const addButton = document.getElementById('add');
+const equalsButton = document.getElementById('equals');
+const decimalButton = document.getElementById('decimal');
+const piButton = document.getElementById('pi');
+const sinButton = document.getElementById('sin');
+const cosButton = document.getElementById('cos');
+const tanButton = document.getElementById('tan');
 
-		function insert(value) {
+let operand1 = null;
+let operator = null;
+let operand2 = null;
+let result = null;
+let displayValue = '';
 
-			document.getElementById('display').value += value;
+function clear() {
+  operand1 = null;
+  operator = null;
+  operand2 = null;
+  result = null;
+  displayValue = '';
+  display.value = displayValue;
+}
 
-		}
+function backspace() {
+  displayValue = displayValue.slice(0, -1);
+  display.value = displayValue;
+}
 
-		
+function appendDigit(digit) {
+  displayValue += digit;
+  display.value = displayValue;
+}
 
-		function clearDisplay() {
+function setOperator(op) {
+  operand1 = parseFloat(displayValue);
+  operator = op;
+  displayValue = '';
+}
 
-			document.getElementById('display').value = '';
+function calculate() {
+  operand2 = parseFloat(displayValue);
+  switch (operator) {
+    case '+':
+      result = operand1 + operand2;
+      break;
+    case '-':
+      result = operand1 - operand2;
+      break;
+    case '*':
+      result = operand1 * operand2;
+      break;
+    case '/':
+      result = operand1 / operand2;
+      break;
+    case 'sin':
+      result = Math.sin(operand1);
+      break;
+    case 'cos':
+      result = Math.cos(operand1);
+      break;
+    case 'tan':
+      result = Math.tan(operand1);
+      break;
+    default:
+      result = operand2;
+      break;
+  }
+  displayValue = result.toString();
+  display.value = displayValue;
+  operand1 = null;
+  operator = null;
+  operand2 = null;
+}
 
-		}
+clearButton.addEventListener('click', clear);
+backspaceButton.addEventListener('click', backspace);
+divideButton.addEventListener('click', () => setOperator('/'));
+multiplyButton.addEventListener('click', () => setOperator('*'));
+subtractButton.addEventListener('click', () => setOperator('-'));
+addButton.addEventListener('click', () => setOperator('+'));
+equalsButton.addEventListener('click', calculate);
+decimalButton.addEventListener('click', () => {
+  if (!displayValue.includes('.')) {
+    appendDigit('.');
+  }
+});
+piButton.addEventListener('click', () => {
+  displayValue = Math.PI.toString();
+  display.value = displayValue;
+});
+sinButton.addEventListener('click', () => setOperator('sin'));
+cosButton.addEventListener('click', () => setOperator('cos'));
+tanButton.addEventListener('click', () => setOperator('tan'));
 
-		
-
-		function backspace() {
-
-			var display = document.getElementById('display');
-
-			display.value = display.value.slice(0, -1);
-
-		}
-
-		
-
-		function calculate() {
-
-			var display = document.getElementById('display');
-
-			var result = eval(display.value);
-
-			display.value = result;
-
-		}
-
+for (let i = 0; i <= 9; i++) {
+  const digitButton = document.getElementById(i.toString());
+  digitButton.addEventListener('click', () => {
+    appendDigit(i.toString());
+  });
+}
 	</script>
-
 </body>
-
 </html>
